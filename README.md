@@ -29,5 +29,3 @@ This project is a web application that implements the **Composite Design Pattern
 - **Thymeleaf** – (if frontend is included)
 - **Lombok** – for boilerplate code reduction
 
-## 📁 File Structure Overview
-
