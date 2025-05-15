@@ -1,0 +1,12 @@
+<Node absoluteCode="" name="Root">
+  <Node absoluteCode="01" name="Paper">
+    <Node absoluteCode="0101" name="Whatman paper">
+      <Product absoluteCode="010101" name="Whatman paper A0" price="5.5"/>
+      <Product absoluteCode="010102" name="Whatman paper A1" price="7.5"/>
+      <Node absoluteCode="010103" name="Old Whatman paper">
+        <Product absoluteCode="01010301" name="Old Whatman paper A1" price="7.5"/>
+      </Node>
+      <Product absoluteCode="010104" name="Whatman paper A7" price="30.5"/>
+    </Node>
+  </Node>
+</Node>
