@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3e9ff;
+            color: #4b0082;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #6a0dad;
+        }
+
+        .panel {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px auto;
+            width: 90%;
+            border: 2px solid #dda0dd;
+        }
+
+        .panel-heading {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #6a0dad;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            border: 1px solid #dda0dd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #ffffff;
+        }
+
+        .form-container input, .form-container select {
+            width: 250px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #d8bfd8;
+            border-radius: 5px;
+            outline: none;
+            color: #4b0082;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #800080;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            align-self: center;
+        }
+
+        .form-container button:hover {
+            background-color: #4b0082;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #dda0dd;
+        }
+
+        th, td {
+            border: 1px solid #d8bfd8;
+            padding: 10px;
+            text-align: center;
+            color: #4b0082;
+        }
+
+        th {
+            background-color: #dda0dd;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f5e6ff;
+        }
+
+        .btn-danger {
+            background-color: #9400d3;
+            border-color: #9400d3;
+        }
+
+        .btn-danger:hover {
+            background-color: #800080;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Catalog Goods</h1>
+
+<div class="panel">
+    <div class="panel-heading">Filter</div>
+    <div class="panel-body">
+        <!-- Search -->
+        <div class="controls">
+            <input id="search" name="search" type="text" oninput="SearchForCode()" placeholder="Search for code" class="form-control w-50"/>
+        </div>
+
+        <hr/>
+
+        <div class="controls">
+            <!-- Add Group -->
+            <form th:action="@{/catalog/add-group}" method="post" class="form-container">
+                <input id="groupName" name="groupName" type="text" placeholder="Group Name" required />
+                <select id="groupId" name="groupId">
+                    <span th:each="opt : ${components}">
+                        <option th:if="${opt.class.name == 'com.hbv.appz1_hbv_l5.composite.Node'}"
+                                th:value="${opt.absoluteCode}" th:text="${opt.name}"></option>
+                    </span>
+                </select>
+                <button type="submit" class="btn btn-success">Add Group</button>
+            </form>
+
+            <!-- Add Product -->
+            <form th:action="@{/catalog/add-product}" method="post" class="form-container">
+                <input id="productName" name="productName" type="text" placeholder="Product Name" required />
+                <select id="productId" name="productId">
+                    <span th:each="opt : ${components}">
+                        <option th:if="${opt.class.name == 'com.hbv.appz1_hbv_l5.composite.Node'}"
+                                th:value="${opt.absoluteCode}" th:text="${opt.name}"></option>
+                    </span>
+                </select>
+                <input id="productPrice" name="productPrice" type="number" step="0.01" placeholder="Price" required />
+                <button type="submit" class="btn btn-success">Add Product</button>
+            </form>
+        </div>
+
+        <hr/>
+
+        <div class="controls">
+            <!-- Save -->
+            <form th:action="@{/catalog/save}" method="post" class="form-container">
+                <input id="filename" name="filename" type="text" placeholder="Filename (.xml)" required />
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+
+            <!-- Open -->
+            <form th:action="@{/catalog/open}" method="post" class="form-container">
+                <input id="path" name="path" type="file" required />
+                <button type="submit" class="btn btn-primary">Open</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<table id="table" class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Absolute Number</th>
+        <th>Relative Number</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <p th:each="component : ${components}">
+        <tr>
+            <td th:text="${component.name}"></td>
+            <td th:text="${component.absoluteCode}"></td>
+            <td th:text="'0' + ${component.absoluteCode.substring(component.absoluteCode.lastIndexOf('0') + 1)}"></td>
+            <td>
+                <span th:if="${component.class.name == 'com.hbv.appz1_hbv_l5.composite.Product'}" th:text="${component.price}"></span>
+            </td>
+            <td>
+                <a class="btn btn-danger btn-sm" th:href="@{/catalog/delete(id=${component.absoluteCode})}">Delete</a>
+            </td>
+        </tr>
+    </p>
+    </tbody>
+</table>
+
+<script>
+    function SearchForCode() {
+        const phrase = document.getElementById('search').value.trim().toLowerCase();
+        document.querySelectorAll('#table tbody tr').forEach(row => {
+            const isMatch = row.textContent.toLowerCase().includes(phrase);
+            row.style.display = isMatch ? '' : 'none';
+        });
+    }
+</script>
+
+</body>
+</html>
